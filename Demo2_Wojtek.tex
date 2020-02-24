@@ -1,0 +1,130 @@
+\documentclass{beamer}
+\usepackage[ruled,vlined]{algorithm2e}
+\usetheme{Antibes}
+\title{Tadashi}
+\subtitle{Group 15, Demo 2}
+\institute{\vspace{2em}\includegraphics[height=3cm]{figs/logo.png}}
+\date{February 26, 2020}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+\begin{frame}
+  \frametitle{Tadashi: a robot for assisted living}
+  \begin{itemize}
+    \item Tadashi is a robot for assisted living and care homes.
+    \item Tadashi delivers food and water to residents.
+    \item Caregivers can schedule and track deliveries --- getting an insight into the nutrition and hydration of residents they're caring for.
+  \end{itemize}
+\end{frame}
+
+\section{Robot movement}
+\begin{frame}
+  \frametitle{Live demo: receipt of a packet and moving the robot}
+\end{frame}
+\begin{frame}
+  \frametitle{Live demo: local cost map}
+\end{frame}
+
+\section{Lift}
+\begin{frame}
+  \frametitle{Quantitative analysis: lift height}
+  {\bf Goal: } allow residents to pick up food and water while sitting without needing to bend down.
+  \begin{center}
+    \includegraphics[width=4cm]{figs/Lift_down_height.png}
+    \includegraphics[width=4cm]{figs/Lift_up_height.png}
+  \end{center}
+  $\implies$ sitting residents can reach tray without need to bend down. 
+\end{frame}
+
+\begin{frame}
+  \frametitle{Quantitative analysis: lift speed}
+  {\bf Goal: } estimate how long residents need to wait to pick up their delivery after the robot arrives.
+  \begin{center}
+    \includegraphics[width=6cm]{figs/Lift_speed.pdf}
+  \end{center}
+  $\implies$ reciprocal relation; use speed of 400 with time of 20.03s.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Quantitative analysis: lift load}
+  {\bf Goal: } inform caregivers how much weight can safely be put on the lift.
+  \begin{center}
+    \begin{tabular}{llllr}
+      {\bf Weight (g)} & {\bf Mean time to lift (s)} & {\bf \# tests} & {\bf \# successes}\\
+      \hline
+      79 & 39.62  & 10 & 10  \\
+      613 & 39.72 & 10 & 10 \\
+      1149 & 39.94 & 10 & 10  \\
+      1326 & 40.19 & 10 & 10 \\
+      1682 & 40.20 & 10 & 10 \\
+      1858 & 39.64 & 10 & 10  \\
+      2034 & 40.39 & 7 & 6
+    \end{tabular}
+  \end{center}
+  $\implies$ do not use with weights of 2kg or above. 
+\end{frame}
+
+\begin{frame}
+  \frametitle{Quantitative analysis: weight}
+  {\bf Goal: } estimate how long residents will need to wait, depending on the weight on the lift.
+  \begin{center}
+    \includegraphics[width=9cm]{figs/Lift_time.pdf}
+  \end{center}
+  $\implies$ statistically significant increase in waiting time with heavier weights, but not noticeable to observer (difference of 0.77s).
+\end{frame}
+
+\section{App}
+\begin{frame}
+  \frametitle{Proposed dashboards}
+  \begin{center}
+    \includegraphics[width=3cm]{figs/prototype1.png}
+    \includegraphics[width=3cm]{figs/prototype2.png}
+    \includegraphics[width=3cm]{figs/prototype3.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Main app screens}
+\end{frame}
+
+\section{Appendix}
+\begin{frame}
+  \frametitle{Statistical testing: difference between means}
+  The mean time taken to lift 79g and 2.0kg is different. We can test this using a two-sample t-test with:
+  $$H_0: \mu_1 = \mu_2,\ H_1: \mu_1 \neq \mu_2 $$
+  $$ \mu_1 = 39.62,\ \mu_2 = 40.39,\ s^2_1 = 0.002,\ s^2_2 = 0.110$$
+  Then we can calculate the test statistic $T$:
+  $$T = \frac{\mu_1 - \mu_2}{\sqrt{s^2_1 / N_1 + s^2_2 / N_2}} = -5.66$$
+
+  For a t-distribution with 4 degrees of freedom, assuming unequal variances and $p = 0.01$, we need $|T| > 3.75$. Since $|T| = 5.66$, $|T| > 3.65$ so we can reject the null hypothesis with $p < 0.01$.
+
+  So the mean time taken to lift 79g and 2.0kg is different. 
+\end{frame}
+
+\begin{frame}
+  \frametitle{Testing algorithm}
+  \begin{algorithm}[H]
+    \KwResult{n samples for each speed in $[200, 300, \ldots, 1000]$}
+    \For{speed in $[200, 300, \ldots, 1000] $}{
+      results = list of size $n$ \\
+      \For{test in $[1, 2, \ldots, n]$}{
+        start time = current time
+        
+        \While{lift is not at top}{
+          raise the lift
+        }
+        
+        end time = current time
+
+        append to results (end time - start time)
+        
+        \While{lift is not at bottom}{
+          lower the lift
+        }
+
+      }
+    }
+  \end{algorithm}
+\end{frame}
+\end{document}
